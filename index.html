@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <style>
+            body {
+                background: rgba(25,100,120,0.5);
+                text-align: center;
+            }
+      
+            canvas {
+                background-color: #FFF;
+                border: dotted 3px yellow;
+            }
+          
+        </style>
+    </head>
+    <body onload="startGame()">
+        <script>
+
+        function startGame() {
+            myGamePiece = new component(40, "red", 60, 40);
+            myGameArea.start();
+         
+        }
+
+        var myGameArea = {
+            canvas : document.createElement("canvas"),
+            start : function() {
+                this.canvas.width = 580;
+                this.canvas.height = 470;
+                this.context = this.canvas.getContext("2d");
+                document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+                this.interval = setInterval(updateGameArea, 20);
+            },
+            clear : function(){
+                this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+        }
+        
+        function component(radio, color, x, y) {           
+            this.radio = radio;
+            this.x = x;
+            this.y = y;    
+            this.update = function(){
+                ctx = myGameArea.context;
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radio, 0, degreesToRadians(360));
+                ctx.fill();
+            }
+        }
+
+        function updateGameArea(){
+            myGameArea.clear();
+            myGamePiece.x += 1;
+            myGamePiece.y += 1;
+            myGamePiece.update();
+        }
+
+        function degreesToRadians(degrees){
+            if(degrees){
+                return (degrees * Math.PI) / 180;
+            }
+        }
+        </script>
+
+    </body>
+</html> 
