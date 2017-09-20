@@ -1,46 +1,135 @@
 var canvas = document.getElementById("areaDibujo");
 var ctx = canvas.getContext("2d");
-var ballRadius = 10;
+var radioPelota = 10;
 var x = canvas.width / 2;
 var y = canvas.height - 30;
 var dx = 2;
 var dy = -2;
 var paletaHeight = 10;
-var paletaWidth = 75;
+var paletaWidth = 90;
 var paletaX = (canvas.width - paletaWidth) / 2;
+var paletaY = canvas.height - paletaHeight;
 var rightPressed = false;
-var leftPressed = false;
+var leftPressed = false
+var colorPelota = "#0095DD";
+var ladrilloRowCount = 3;
+var ladrilloColumnCount = 5;
+var ladrilloWidth = 75;
+var ladrilloHeight = 20;
+var ladrilloPadding = 10;
+var ladrilloOffsetTop = 30;
+var ladrilloOffsetLeft = 30;
 
+var ladrillos = [];
+for(c = 0; c < ladrilloColumnCount; c++){
+  ladrillos[c] = [];
+  for(r = 0; r < ladrilloRowCount; r++){
+    ladrillos[c][r] = {x: 0, y: 0};
+  }
+}
+
+document.addEventListener("keydown", controladorKeyDown, false);
+document.addEventListener("keyup", controladorKeyUp, false);
+
+function codeKey(e, estado){
+  if(e.keyCode == 39) {
+    rightPressed = estado;
+  } else if(e.keyCode == 37) {
+    leftPressed = estado;
+  }
+}
+
+function controladorKeyDown(e) {
+  codeKey(e, true);
+}
+
+function controladorKeyUp(e) {
+  codeKey(e, false)
+}
+
+/**
+* Dibujo de personaje pelota
+*/
 function dibujarPelota(){
   ctx.beginPath();
   ctx.arc(x, y, 10, 0, Math.PI * 2);
-  ctx.fillStyle = "#0095DD";
+  ctx.fillStyle = colorPelota;
   ctx.fill();
   ctx.closePath();
 }
 
+/**
+ * Dibuja la paleta del jugdor
+ */
 function dibujarPaleta(){
   ctx.beginPath();
-  ctx.rect(paletaX, canvas.height - paletaHeight, paletaWidth, paletaHeight);
+  ctx.rect(paletaX, paletaY, paletaWidth, paletaHeight);
   ctx.fillStyle = "#0095DD";
   ctx.fill();
   ctx.closePath();
 }
 
+function dibujarLadrillos(){
+  for(c = 0; c < ladrilloColumnCount; c++){
+    for(r = 0; r < ladrilloRowCount; r++){
+      var brickX = (c * (ladrilloWidth + ladrilloPadding)) + ladrilloOffsetLeft;
+      var brickY = (r * (ladrilloHeight + ladrilloPadding)) + ladrilloOffsetTop;
+      ladrillos[c][r].x = brickX;
+      ladrillos[c][r].y = brickY;
+      ctx.beginPath();
+      ctx.rect(brickX, brickY, ladrilloWidth, ladrilloHeight);
+      ctx.fillStyle = "0095DD";
+      ctx.fill();
+      ctx.closePath();
+    }
+  }
+}
+
+/**
+ * Dibuja un mensaje de GAME OVER
+ */
+function gameOver(){
+//  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  texto(ctx, "GAME OVER", false);
+}
+
+/**
+ * Funcion proncipal del juego
+ */
 function dibujar(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  //dibujarLadrillos();
   dibujarPelota();
   dibujarPaleta();
 
-  if(x + dx > canvas.width - ballRadius || x + dx < ballRadius){
+  if(x + dx > canvas.width - radioPelota || x + dx < radioPelota){
     dx = - dx;
+    colorPelota = getRandomColor();
   }
-  if(y + dy > canvas.height - ballRadius || y + dy < ballRadius){
+  if(y + dy < radioPelota){
     dy = -dy;
+    colorPelota = getRandomColor();
+  }
+  else if(y + dy > paletaY - radioPelota) {
+    if(x > paletaX && x < paletaX + paletaWidth) {
+      dy += 0.2;
+      dy = -dy;
+      colorPelota = getRandomColor();
+    }
+    else{
+      gameOver();
+      clearInterval(gameLoop);
+    }
+  }
+
+  if(rightPressed && paletaX < canvas.width - paletaWidth) {
+    paletaX += 5;
+  }
+  else if(leftPressed && paletaX > 0){
+    paletaX -= 5;
   }
 
   x += dx;
   y += dy;
 }
-
-setInterval(dibujar, 10);
+gameLoop = setInterval(dibujar, 10);

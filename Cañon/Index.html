@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Juego del Cañon</title>
+    <script src="js\canion.js"></script>
+  </head>
+  <body>
+    <audio id="sonidoBloqueador" preload="auto">
+      <source src="bloqueador_golpe.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sonidoObjetivo" preload="auto">
+      <source src="objetivo_golpe.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sonidoCanion" preload="auto">
+      <source src="canion_fuego.mp3" type="audio/mpeg">
+    </audio>
+    <canvas id="canvas" width="480" height="600"></canvas>
+    <p>
+      <input id="botonIniciar" type="button" value="Iniciar Juego">
+    </p>
+  </body>
+</html>
