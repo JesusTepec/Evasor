@@ -24,13 +24,18 @@ var ladrillos = [];
 for(c = 0; c < ladrilloColumnCount; c++){
   ladrillos[c] = [];
   for(r = 0; r < ladrilloRowCount; r++){
-    ladrillos[c][r] = {x: 0, y: 0};
+    ladrillos[c][r] = {x: 0, y: 0, status: 1};
   }
 }
 
 document.addEventListener("keydown", controladorKeyDown, false);
 document.addEventListener("keyup", controladorKeyUp, false);
 
+/**
+ * Detecta si se a presionado <- o -> del teclado
+ * @param  {event} e        evento up o down
+ * @param  {boolean} estado estado de tecla
+ */
 function codeKey(e, estado){
   if(e.keyCode == 39) {
     rightPressed = estado;
@@ -45,6 +50,24 @@ function controladorKeyDown(e) {
 
 function controladorKeyUp(e) {
   codeKey(e, false)
+}
+
+/**
+ * Deteccion de choque de pelota con los ladrillos
+ */
+function colisionLadrillos(){
+  for(c = 0; c < ladrilloColumnCount; c++){
+    for(r = 0; r < ladrilloRowCount; r++){
+      var b = ladrillos[c][r];
+      if(b.status == 1){
+        if(x > b.x && x < b.x + ladrilloWidth && y > b.y && y < b.y + ladrilloHeight){
+          dy = -dy;
+          b.status = 0;
+          colorPelota = getRandomColor();
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -69,18 +92,23 @@ function dibujarPaleta(){
   ctx.closePath();
 }
 
+/**
+ * Dibuja el arreglo de ladrillos
+ */
 function dibujarLadrillos(){
   for(c = 0; c < ladrilloColumnCount; c++){
     for(r = 0; r < ladrilloRowCount; r++){
-      var brickX = (c * (ladrilloWidth + ladrilloPadding)) + ladrilloOffsetLeft;
-      var brickY = (r * (ladrilloHeight + ladrilloPadding)) + ladrilloOffsetTop;
-      ladrillos[c][r].x = brickX;
-      ladrillos[c][r].y = brickY;
-      ctx.beginPath();
-      ctx.rect(brickX, brickY, ladrilloWidth, ladrilloHeight);
-      ctx.fillStyle = "0095DD";
-      ctx.fill();
-      ctx.closePath();
+      if(ladrillos[c][r].status == 1){
+        var brickX = (c * (ladrilloWidth + ladrilloPadding)) + ladrilloOffsetLeft;
+        var brickY = (r * (ladrilloHeight + ladrilloPadding)) + ladrilloOffsetTop;
+        ladrillos[c][r].x = brickX;
+        ladrillos[c][r].y = brickY;
+        ctx.beginPath();
+        ctx.rect(brickX, brickY, ladrilloWidth, ladrilloHeight);
+        ctx.fillStyle = "0095DD";
+        ctx.fill();
+        ctx.closePath();
+      }
     }
   }
 }
@@ -98,10 +126,10 @@ function gameOver(){
  */
 function dibujar(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  //dibujarLadrillos();
+  dibujarLadrillos();
   dibujarPelota();
   dibujarPaleta();
-
+  colisionLadrillos();
   if(x + dx > canvas.width - radioPelota || x + dx < radioPelota){
     dx = - dx;
     colorPelota = getRandomColor();
