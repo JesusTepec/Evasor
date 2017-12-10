@@ -19,6 +19,7 @@ var ladrilloHeight = 20;
 var ladrilloPadding = 10;
 var ladrilloOffsetTop = 30;
 var ladrilloOffsetLeft = 30;
+var puntuacion = 0;
 
 var ladrillos = [];
 for(c = 0; c < ladrilloColumnCount; c++){
@@ -64,6 +65,10 @@ function colisionLadrillos(){
           dy = -dy;
           b.status = 0;
           colorPelota = getRandomColor();
+          puntuacion++;
+          if(puntuacion == ladrilloRowCount * ladrilloColumnCount){
+            youWin();
+          }
         }
       }
     }
@@ -121,6 +126,18 @@ function gameOver(){
   texto(ctx, "GAME OVER", false);
 }
 
+function youWin() {
+  texto(ctx, "   YOU WIN! ");
+  //document.location.reload();
+  clearInterval(gameLoop);
+}
+
+function dibujarPuntuacion() {
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#0095DD";
+  ctx.fillText("Score: " + puntuacion, 8, 20);
+}
+
 /**
  * Funcion proncipal del juego
  */
@@ -129,6 +146,7 @@ function dibujar(){
   dibujarLadrillos();
   dibujarPelota();
   dibujarPaleta();
+  dibujarPuntuacion();
   colisionLadrillos();
   if(x + dx > canvas.width - radioPelota || x + dx < radioPelota){
     dx = - dx;
@@ -139,12 +157,15 @@ function dibujar(){
     colorPelota = getRandomColor();
   }
   else if(y + dy > paletaY - radioPelota) {
-    if(x > paletaX && x < paletaX + paletaWidth) {
+    if(x > paletaX - 6 && x < paletaX + paletaWidth + 6) {
       dy += 0.2;
       dy = -dy;
       colorPelota = getRandomColor();
     }
     else{
+      console.log(x);
+      console.log(paletaX);
+      console.log(paletaWidth);
       gameOver();
       clearInterval(gameLoop);
     }

@@ -1,0 +1,10 @@
+body {
+  background: #02727f;
+  color: white;
+  text-shadow: 0px 2px 10px #013840;
+}
+
+#Canvas {
+  background: white;
+  box-shadow: 5px 0px 2px #013840;
+}
