@@ -25,13 +25,21 @@ function canvasApp(){
     var canvasPos = canvas.getBoundingClientRect();
   }
 
+   function dibujarTexto(info, x, y){
+    context.save()
+    context.fillStyle = "#58777F";
+    context.font = "50px Dimitri Swank";
+    context.fillText(info, x, y);
+    context.restore;
+  }
+
   function dibujaTarjeta(tarjeta, seleccionado){
-    if(seleccionado)
-      context.fillStyle = "#C9C238";
-    else
-      context.fillStyle = "white";
-    context.fillRect(tarjeta.x, tarjeta.y, tarjeta.w, tarjeta.h);
+  	context.fillStyle = "white";
+  	context.fillRect(tarjeta.x, tarjeta.y, tarjeta.w, tarjeta.h);
     context.strokeRect(tarjeta.x, tarjeta.y, tarjeta.w, tarjeta.h);
+    if(seleccionado) {
+    	dibujarTexto(tarjeta.info, tarjeta.x + tarjeta.w / 3, tarjeta.y + tarjeta.h / 1.5);
+    }
   }
 
   function crearTarjetas() {
@@ -43,10 +51,11 @@ function canvasApp(){
 
     for(i = 0; i < rows; i++){
       for(j = 0; j < cols; j++){
-        var tarjeta = {x: xx, y: yy, w: width, h: height};
+        var tarjeta = {x: xx, y: yy, w: width, h: height, info: n};
         tarjetas.push(tarjeta);
         dibujaTarjeta(tarjeta);
         xx += width;
+        n++;
       }
       xx = margen;
       yy += height;
